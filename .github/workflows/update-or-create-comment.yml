@@ -5,9 +5,6 @@ on:
       - opened
       - synchronize # プルリクエストのヘッドブランチが更新されたときにトリガーされる (pushなど) https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#webhook-payload-object-35
       - reopened
-    paths:
-      - ".github/workflows/portal-*"
-      - "packages/portal/**"
 jobs:
   comment:
     name: Comment

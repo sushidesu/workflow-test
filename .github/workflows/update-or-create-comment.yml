@@ -1,0 +1,42 @@
+name: Update Or Create Comment
+on:
+  pull_request: # on: push だと pull_request.number を取得できない
+    types:
+      - opened
+      - synchronize # プルリクエストのヘッドブランチが更新されたときにトリガーされる (pushなど) https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#webhook-payload-object-35
+      - reopened
+    paths:
+      - ".github/workflows/portal-*"
+      - "packages/portal/**"
+jobs:
+  comment:
+    name: Comment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc
+        # continue-on-error: true # コメントが無い場合エラーになるが、stepを続行する
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Hello :books:'
+
+      - name: Get datetime for now
+        id: datetime
+        run: echo "::set-output name=value::$(date)"
+        env:
+          TZ: Asia/Tokyo
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            hello :books: (updated for commit ${{ github.event.pull_request.head.sha }}):
+            :fire: updated at ${{ steps.datetime.outputs.value }}
+          edit-mode: replace

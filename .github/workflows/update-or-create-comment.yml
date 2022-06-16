@@ -19,7 +19,6 @@ jobs:
         # continue-on-error: true # コメントが無い場合エラーになるが、stepを続行する
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
           body-includes: 'Hello :books:'
 
       - name: Get datetime for now
